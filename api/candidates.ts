@@ -1,4 +1,4 @@
-import { db } from '../src/lib/db';
+import { mockData } from './_mock';
 
 export default async function handler(req: any, res: any) {
   try {
@@ -8,34 +8,21 @@ export default async function handler(req: any, res: any) {
     const search = url.searchParams.get('search') || '';
     const status = url.searchParams.get('status') || '';
 
-    let query = db.candidates;
+    let candidates = mockData.candidates.slice();
 
     if (search) {
-      query = query.filter(candidate => 
-        candidate.name.toLowerCase().includes(search.toLowerCase()) ||
-        candidate.email.toLowerCase().includes(search.toLowerCase())
-      );
+      const q = search.toLowerCase();
+      candidates = candidates.filter(c => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q));
     }
 
     if (status) {
-      query = query.filter(candidate => candidate.status === status);
+      candidates = candidates.filter(c => c.stage === status);
     }
 
-    const total = await query.count();
-    const candidates = await query
-      .offset((page - 1) * pageSize)
-      .limit(pageSize)
-      .toArray();
+    const total = candidates.length;
+    const paginated = candidates.slice((page - 1) * pageSize, page * pageSize);
 
-    return res.status(200).json({
-      candidates,
-      pagination: {
-        page,
-        pageSize,
-        total,
-        totalPages: Math.ceil(total / pageSize)
-      }
-    });
+    return res.status(200).json({ candidates: paginated, pagination: { page, pageSize, total, totalPages: Math.ceil(total / pageSize) } });
   } catch (error) {
     console.error('Error in /api/candidates:', error);
     return res.status(500).json({ error: 'Internal server error' });
