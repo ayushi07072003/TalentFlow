@@ -85,6 +85,9 @@ export interface CandidateTimeline {
 }
 
 export class TalentFlowDB extends Dexie {
+  seed() {
+    throw new Error('Method not implemented.');
+  }
   jobs!: Table<Job>;
   candidates!: Table<Candidate>;
   assessments!: Table<Assessment>;
