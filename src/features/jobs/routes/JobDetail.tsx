@@ -310,7 +310,7 @@ export function JobDetail() {
         </div>
       </div>
       {/* Dev debug panel - shows route param and raw job object to aid debugging */}
-      {import.meta.env.DEV && (
+      {(import.meta.env as ImportMetaEnv).DEV && (
         <div className="mt-4 p-3 bg-gray-50 border rounded text-sm">
           <div className="font-medium text-gray-700">Debug</div>
           <div className="text-xs text-gray-600 mt-2">route jobId: <code className="bg-white px-1 rounded">{String(jobId)}</code></div>

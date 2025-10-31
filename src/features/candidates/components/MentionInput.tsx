@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 
@@ -89,7 +89,6 @@ export function MentionInput({ value, onChange, placeholder, disabled }: Mention
     
     return parts.map((part, index) => {
       if (part.startsWith('@')) {
-        const username = part.substring(1);
         return (
           <Badge key={index} variant="secondary" className="mx-1">
             {part}

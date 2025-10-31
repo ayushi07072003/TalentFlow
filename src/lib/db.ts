@@ -99,7 +99,7 @@ export class TalentFlowDB extends Dexie {
       candidates: 'id, name, email, jobId, stage, createdAt, updatedAt',
       assessments: 'id, jobId, createdAt, updatedAt',
       assessmentResponses: 'id, assessmentId, candidateId, submittedAt',
-      candidateTimeline: 'id, candidateId, timestamp, type'
+      candidateTimeline: 'id, candidateId, timestamp, type, *timestamp'
     });
 
     // New stores added in version 2: assessment assignments linking candidates to assessments

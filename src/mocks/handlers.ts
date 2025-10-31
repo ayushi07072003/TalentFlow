@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import { db, Job, Candidate, Assessment, AssessmentResponse, CandidateTimeline } from '../lib/db';
+import { db, Job, Candidate, Assessment, AssessmentResponse } from '../lib/db';
 
 // Simulate network latency
 const delay = () => new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 200));
@@ -378,8 +378,7 @@ export const handlers = [
     const timeline = await db.candidateTimeline
       .where('candidateId')
       .equals(params.id as string)
-      .orderBy('timestamp')
-      .toArray();
+      .sortBy('timestamp');
     
     return HttpResponse.json(timeline);
   }),

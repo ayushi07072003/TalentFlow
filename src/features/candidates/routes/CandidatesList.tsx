@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { VirtualizedCandidatesList } from '../components/VirtualizedCandidatesList';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Search, Grid, List, Users } from 'lucide-react';
+import { Search, Grid, List } from 'lucide-react';
 
 const STAGE_OPTIONS = [
   { value: '', label: 'All Stages' },
@@ -62,7 +61,7 @@ export function CandidatesList() {
               <Input
                 placeholder="Search candidates..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearch(e.target.value)}
                 className="pl-10"
               />
             </div>

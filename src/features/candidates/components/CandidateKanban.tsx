@@ -1,10 +1,7 @@
-import React from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   DndContext,
   DragEndEvent,
-  DragOverEvent,
-  DragStartEvent,
   PointerSensor,
   useSensor,
   useSensors,
@@ -152,7 +149,7 @@ export function CandidateKanban() {
     const { active, over } = event;
 
     if (active && over && active.id !== over.id) {
-      const candidate = candidates.find(c => c.id === active.id);
+      const candidate = candidates.find((c: Candidate) => c.id === active.id);
       const newStage = over.id as string;
 
       if (candidate && candidate.stage !== newStage) {
@@ -167,7 +164,7 @@ export function CandidateKanban() {
   // Group candidates by stage
   const candidatesByStage = STAGES.map(stage => ({
     stage,
-    candidates: candidates.filter(c => c.stage === stage.id),
+    candidates: candidates.filter((c: Candidate) => c.stage === stage.id),
   }));
 
   if (isLoading) {

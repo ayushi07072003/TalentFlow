@@ -1,4 +1,3 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -11,7 +10,7 @@ import { CheckCircle, Upload } from 'lucide-react';
 
 interface AssessmentRuntimeProps {
   assessment?: Assessment | null;
-  onSubmit?: (data: any) => void;
+  onSubmit?: (data: Record<string, string | number | File>) => void;
   isReadOnly?: boolean;
 }
 
@@ -30,35 +29,45 @@ export function AssessmentRuntime({ assessment, onSubmit, isReadOnly = false }: 
     
     assessment.sections.forEach((section) => {
       section.questions.forEach((question) => {
-        let fieldSchema: z.ZodTypeAny;
+        let fieldSchema: z.ZodType<any>;
         
         switch (question.type) {
           case 'short-text':
-          case 'long-text':
-            fieldSchema = z.string();
-            if (question.required) fieldSchema = fieldSchema.min(1, 'This field is required');
-            if (question.maxLength) fieldSchema = fieldSchema.max(question.maxLength, `Maximum ${question.maxLength} characters`);
+          case 'long-text': {
+            let schema = z.string();
+            if (question.required) schema = schema.min(1, 'This field is required');
+            if (question.maxLength) schema = schema.max(question.maxLength, `Maximum ${question.maxLength} characters`);
+            fieldSchema = question.required ? schema : schema.optional();
             break;
-          case 'numeric':
-            fieldSchema = z.number();
-            if (question.required) fieldSchema = fieldSchema.min(0, 'This field is required');
-            if (question.min !== undefined) fieldSchema = fieldSchema.min(question.min, `Minimum value is ${question.min}`);
-            if (question.max !== undefined) fieldSchema = fieldSchema.max(question.max, `Maximum value is ${question.max}`);
+          }
+          case 'numeric': {
+            let schema = z.number();
+            if (typeof question.min === 'number') schema = schema.gte(question.min, `Minimum value is ${question.min}`);
+            if (typeof question.max === 'number') schema = schema.lte(question.max, `Maximum value is ${question.max}`);
+            fieldSchema = question.required ? schema : schema.optional();
             break;
-          case 'single-choice':
-            fieldSchema = z.string();
-            if (question.required) fieldSchema = fieldSchema.min(1, 'Please select an option');
+          }
+          case 'single-choice': {
+            let schema = z.string();
+            if (question.required) schema = schema.min(1, 'Please select an option');
+            fieldSchema = question.required ? schema : schema.optional();
             break;
-          case 'multi-choice':
-            fieldSchema = z.array(z.string());
-            if (question.required) fieldSchema = fieldSchema.min(1, 'Please select at least one option');
+          }
+          case 'multi-choice': {
+            let schema = z.array(z.string());
+            if (question.required) schema = schema.min(1, 'Please select at least one option');
+            fieldSchema = question.required ? schema : schema.optional();
             break;
-          case 'file-upload':
-            fieldSchema = z.any();
-            if (question.required) fieldSchema = fieldSchema.refine((val) => val && val.length > 0, 'Please upload a file');
+          }
+          case 'file-upload': {
+            let schema = z.instanceof(File);
+            fieldSchema = question.required 
+              ? schema.refine((val) => val instanceof File, 'Please upload a file')
+              : schema.optional();
             break;
+          }
           default:
-            fieldSchema = z.string();
+            fieldSchema = z.string().optional();
         }
         
         fields[question.id] = fieldSchema;
@@ -224,7 +233,7 @@ export function AssessmentRuntime({ assessment, onSubmit, isReadOnly = false }: 
                     )}
 
                     {errors[question.id] && (
-                      <p className="text-sm text-red-500">{errors[question.id]?.message}</p>
+                      <p className="text-sm text-red-500">{String(errors[question.id]?.message)}</p>
                     )}
                   </div>
                 );

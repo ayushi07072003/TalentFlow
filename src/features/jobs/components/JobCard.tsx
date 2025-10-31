@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,7 @@ interface JobCardProps {
   onDelete: (job: Job) => void;
 }
 
-export function JobCard({ job, onEdit, onArchive, onUnarchive }: JobCardProps) {
+export function JobCard({ job, onEdit, onArchive, onUnarchive, onDelete }: JobCardProps) {
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-3">

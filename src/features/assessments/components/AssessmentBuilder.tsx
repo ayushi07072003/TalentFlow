@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +12,7 @@ import { Plus, Trash2, Eye, Save } from 'lucide-react';
 import { AssessmentRuntime } from './AssessmentRuntime';
 
 const questionSchema = z.object({
+  id: z.string().optional(), // Made optional since it's generated on save
   title: z.string().min(1, 'Question title is required'),
   description: z.string().optional(),
   type: z.enum(['single-choice', 'multi-choice', 'short-text', 'long-text', 'numeric', 'file-upload']),
@@ -23,14 +24,19 @@ const questionSchema = z.object({
 });
 
 const sectionSchema = z.object({
+  id: z.string().optional(), // Made optional since it's generated on save
   title: z.string().min(1, 'Section title is required'),
   questions: z.array(questionSchema),
 });
 
 const assessmentSchema = z.object({
+  id: z.string().optional(), // Made optional since it's generated on save
+  jobId: z.string(),
   title: z.string().min(1, 'Assessment title is required'),
   description: z.string().optional(),
   sections: z.array(sectionSchema),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 
 type AssessmentForm = z.infer<typeof assessmentSchema>;
@@ -43,13 +49,14 @@ export function AssessmentBuilder({ jobId }: AssessmentBuilderProps) {
   const [previewMode, setPreviewMode] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: assessment, isLoading } = useQuery({
+  const { data: assessment, isLoading } = useQuery<Assessment | null>({
     queryKey: ['assessment', jobId],
     queryFn: async () => {
       const response = await fetch(`/api/assessments/${jobId}`);
       if (response.status === 404) return null;
       if (!response.ok) throw new Error('Failed to fetch assessment');
-      return response.json() as Assessment;
+      const data = await response.json();
+      return data as Assessment;
     },
   });
 

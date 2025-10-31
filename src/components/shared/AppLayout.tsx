@@ -8,7 +8,6 @@ import {
   FileText, 
   LogOut, 
   Home,
-  BarChart3
 } from 'lucide-react';
 
 const navigation = [
