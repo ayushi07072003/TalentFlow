@@ -170,7 +170,7 @@ export const handlers = [
     return HttpResponse.json(updatedJob);
   }),
 
-  http.patch('/api/jobs/:id/reorder', async ({ params, request }) => {
+  http.patch('/api/jobs/:id/reorder', async ({  request }) => {
     await delay();
     
     if (shouldError()) {
