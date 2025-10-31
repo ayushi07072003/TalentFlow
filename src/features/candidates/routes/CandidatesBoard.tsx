@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { CandidateKanban } from '../components/CandidateKanban';
 
 export function CandidatesBoard() {

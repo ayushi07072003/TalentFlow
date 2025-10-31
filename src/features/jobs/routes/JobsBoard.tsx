@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
 import { JobsList } from '../components/JobsList';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Search, X } from 'lucide-react';
+import { useState } from 'react';
 
 const STATUS_OPTIONS = [
   { value: '', label: 'All Status' },
