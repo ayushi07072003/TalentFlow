@@ -1,6 +1,15 @@
 import { faker } from '@faker-js/faker';
 
-faker.seed(12345);
+// Wrap mock data generation in try/catch to avoid crashing serverless function
+// during module import (errors during top-level evaluation cause FUNCTION_INVOCATION_FAILED).
+try {
+  faker.seed(12345);
+} catch (err) {
+  // If faker isn't available or fails, we'll handle it later and export empty datasets.
+  // Log minimal info to Vercel function logs.
+  // eslint-disable-next-line no-console
+  console.error('[api/_mock] faker.seed failed during module init:', String(err));
+}
 
 type Job = {
   id: string;
@@ -95,4 +104,14 @@ export function generateMockData() {
 }
 
 // Cache the generated data so every function invocation (cold start aside) returns same data
-export const mockData = generateMockData();
+let _mockData: { jobs: Job[]; candidates: Candidate[]; assessments: Assessment[] } | null = null;
+try {
+  _mockData = generateMockData();
+} catch (err) {
+  // If generation fails at import time, log and export empty datasets to keep functions alive.
+  // eslint-disable-next-line no-console
+  console.error('[api/_mock] generateMockData failed during module init:', String(err));
+  _mockData = { jobs: [], candidates: [], assessments: [] };
+}
+
+export const mockData = _mockData;
