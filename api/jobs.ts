@@ -1,15 +1,24 @@
 import { mockData } from './_mock';
 
 export default async function handler(req: any, res: any) {
+  // Diagnostic logs to help debug serverless failures in Vercel
   try {
-    const url = new URL(req.url, `http://${req.headers.host}`);
+    // Guard against missing mockData caused by import-time failures
+    if (!mockData) {
+      console.error('[api/jobs] mockData is null or undefined');
+      return res.status(500).json({ error: 'Server mock data unavailable' });
+    }
+
+    const host = req.headers?.host || 'localhost';
+    const url = new URL(req.url || '/', `http://${host}`);
     const page = parseInt(url.searchParams.get('page') || '1');
     const pageSize = parseInt(url.searchParams.get('pageSize') || '10');
     const search = url.searchParams.get('search') || '';
     const status = url.searchParams.get('status') || '';
     const tags = url.searchParams.get('tags')?.split(',') || [];
 
-    let jobs = mockData.jobs.slice();
+  console.debug('[api/jobs] mock jobs count', Array.isArray(mockData.jobs) ? mockData.jobs.length : 0);
+  let jobs = Array.isArray(mockData.jobs) ? mockData.jobs.slice() : [];
 
     if (search) {
       jobs = jobs.filter(job => job.title.toLowerCase().includes(search.toLowerCase()));
