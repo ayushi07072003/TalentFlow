@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Job } from '@/lib/db';
-import { Archive, Edit, ExternalLink } from 'lucide-react';
+import { Archive, Edit } from 'lucide-react';
 
 interface JobCardProps {
   job: Job;

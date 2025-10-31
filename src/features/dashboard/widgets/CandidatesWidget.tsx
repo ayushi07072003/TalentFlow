@@ -1,4 +1,3 @@
-import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Candidate } from '@/lib/db';
 import { PieChart, Pie, Cell, Tooltip, Legend, LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer } from 'recharts';
@@ -43,9 +42,6 @@ export function CandidatesWidget() {
     STAGES.forEach(s => { obj[s] = dayCandidates.filter(c => c.stage === s).length; });
     return obj;
   });
-
-  // Conversion rates
-  const conversion = STAGES.map((s, i) => i === 0 ? 100 : Math.round((stageCounts[s] / total) * 100));
 
   return (
     <div className="card bg-white rounded-lg shadow p-4 mb-4">

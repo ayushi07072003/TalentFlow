@@ -85,7 +85,7 @@ export function JobsWidget() {
           {Object.entries(hiredByJob)
             .sort((a, b) => b[1] - a[1])
             .slice(0, 10) // Show only top 10 jobs
-            .map(([title, count], index) => {
+            .map(([title, count]) => {
               const maxWidth = Math.max(...Object.values(hiredByJob));
               const width = (count / maxWidth) * 100;
               return (

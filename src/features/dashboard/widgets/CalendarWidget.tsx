@@ -61,11 +61,6 @@ export function CalendarWidget() {
     if (val < 7) return "med";
     return "high";
   }
-  const rateColor = {
-    low: "bg-green-400",
-    med: "bg-yellow-400",
-    high: "bg-red-400"
-  };
   const rateLabel = {
     low: "Low",
     med: "Medium",
@@ -126,7 +121,7 @@ export function CalendarWidget() {
               <span
                 className={
                   rate && day <= today
-                    ? `inline-block w-6 h-6 flex items-center justify-center rounded-full border-2 ${
+                    ? `w-6 h-6 flex items-center justify-center rounded-full border-2 ${
                         rate === "low"
                           ? "border-green-400"
                           : rate === "med"
