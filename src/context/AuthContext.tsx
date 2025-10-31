@@ -2,6 +2,8 @@ import  { createContext, useContext, useState, useEffect, ReactNode } from 'reac
 
 interface User {
   name: string;
+    email: string;
+    role: string;
 }
 
 interface AuthContextType {
@@ -35,7 +37,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Auto-login a demo user in development to make local dev flows easier.
         const isDev = (import.meta as any)?.env?.DEV;
         if (isDev) {
-          const demoUser = { name: 'Developer' };
+            const demoUser = { 
+              name: 'Developer', 
+              email: 'dev@talentflow.local',
+              role: 'admin'
+            };
           setIsAuthenticated(true);
           setUser(demoUser);
           localStorage.setItem('talentflow-auth', JSON.stringify({ isAuthenticated: true, user: demoUser }));
@@ -52,16 +58,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const login = (userData: User) => {
     setIsAuthenticated(true);
     setUser(userData);
-    localStorage.setItem('talentflow-auth', JSON.stringify({
-      isAuthenticated: true,
-      user: userData
-    }));
+      try {
+        localStorage.setItem('talentflow-auth', JSON.stringify({
+          isAuthenticated: true,
+          user: userData
+        }));
+      } catch (error) {
+        console.error('Error saving auth state:', error);
+      }
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
-    localStorage.removeItem('talentflow-auth');
+      try {
+        localStorage.removeItem('talentflow-auth');
+      } catch (error) {
+        console.error('Error clearing auth state:', error);
+      }
   };
 
   return (

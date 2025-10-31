@@ -12,13 +12,41 @@ export const handlers = [
   http.post('/api/login', async ({ request }) => {
     await delay();
     
-    const body = await request.json() as { email: string; password: string };
+      let body;
+      try {
+        body = await request.json() as { email: string; password: string };
+        if (!body.email || !body.password) {
+          return new HttpResponse(
+            JSON.stringify({ error: 'Email and password are required' }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } }
+          );
+        }
+      } catch (error) {
+        return new HttpResponse(
+          JSON.stringify({ error: 'Invalid request body' }),
+          { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
     
     if (body.email === 'admin@talentflow.io' && body.password === 'password123') {
-      return HttpResponse.json({ user: { name: 'HR Admin' } });
+      return HttpResponse.json({ 
+        user: { 
+          name: 'HR Admin',
+          email: 'admin@talentflow.io',
+          role: 'admin'
+        }
+      }, { status: 200 });
     }
     
-    return new HttpResponse(null, { status: 401 });
+      return new HttpResponse(
+        JSON.stringify({ error: 'Invalid credentials' }),
+        { status: 401, headers: { 'Content-Type': 'application/json' } }
+      );
+  }),
+
+  http.get('/api/login', async () => {
+    // Handle GET requests to /api/login with 405 Method Not Allowed
+    return new HttpResponse('Method not allowed', { status: 405 });
   }),
 
   // Jobs handlers

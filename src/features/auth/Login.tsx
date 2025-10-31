@@ -43,21 +43,15 @@ export function Login() {
         body: JSON.stringify(data),
       });
 
+        const responseData = await response.json();
+
       if (response.ok) {
-        const { user } = await response.json();
+          const { user } = responseData;
         login(user);
         navigate('/');
       } else {
-        // Try to read body for more helpful error messages in dev
-        let bodyText = '';
-        try {
-          bodyText = await response.text();
-        } catch (e) {
-          // ignore
-        }
-        // eslint-disable-next-line no-console
-        console.debug('[Login] failed', response.status, response.statusText, bodyText);
-        setError(response.status === 401 ? 'Invalid credentials' : `Login failed (${response.status})`);
+          setError(responseData.error || `Login failed (${response.status})`);
+          console.debug('[Login] failed', response.status, response.statusText, responseData);
       }
     } catch (err) {
       setError('Login failed. Please try again.');
